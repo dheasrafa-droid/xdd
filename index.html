@@ -1,74 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSRT Editor Full</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Chat Demo</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  #loginDiv, #chatDiv { max-width: 400px; margin: auto; }
+  #chatDiv { display: none; border: 1px solid #ccc; padding: 10px; border-radius: 8px; }
+  #chatContainer { height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; margin-bottom: 10px; }
+  #chatContainer div { margin: 5px 0; }
+  input, button { padding: 8px; margin-top: 5px; }
+  button { cursor: pointer; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>DSRT Editor</h1>
 
-    <!-- Upload -->
-    <input type="file" id="upload" accept="image/*">
-    
-    <!-- Canvas -->
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-    </div>
+<div id="loginDiv">
+  <h3>Login</h3>
+  <input type="text" id="usernameInput" placeholder="Username"><br>
+  <button id="loginBtn">Login</button>
+</div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button id="rotateTab">Rotate</button>
-      <button id="filterTab">Filter</button>
-      <button id="brushTab">Brush</button>
-      <button id="textTab">Text</button>
-      <button id="stickerTab">Sticker</button>
-      <button id="bgTab">Background</button>
-    </div>
+<div id="chatDiv">
+  <h3>Mini Chat</h3>
+  <div id="chatContainer"></div>
+  <input type="text" id="messageInput" placeholder="Type message">
+  <button id="sendBtn">Send</button>
+</div>
 
-    <!-- Modals / Options -->
-    <div id="rotateOptions" class="modal hidden">
-      <button data-angle="90">90°</button>
-      <button data-angle="180">180°</button>
-      <button data-angle="270">270°</button>
-      <button data-angle="360">360°</button>
-    </div>
+<script>
+const loginDiv = document.getElementById('loginDiv');
+const chatDiv = document.getElementById('chatDiv');
+const usernameInput = document.getElementById('usernameInput');
+const loginBtn = document.getElementById('loginBtn');
+const chatContainer = document.getElementById('chatContainer');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
 
-    <div id="filterOptions" class="modal hidden">
-      <label>Brightness <input type="range" id="brightness" min="0" max="200" value="100"></label>
-      <label>Contrast <input type="range" id="contrast" min="0" max="200" value="100"></label>
-      <button id="grayscale">Grayscale</button>
-      <button id="sepia">Sepia</button>
-    </div>
+let username = '';
 
-    <div id="brushOptions" class="modal hidden">
-      <label>Size <input type="range" id="brushSize" min="1" max="50" value="5"></label>
-      <label>Color <input type="color" id="brushColor" value="#ff0000"></label>
-      <button id="brushClear">Clear Brush</button>
-    </div>
+loginBtn.addEventListener('click', () => {
+  username = usernameInput.value.trim();
+  if(username){
+    loginDiv.style.display = 'none';
+    chatDiv.style.display = 'block';
+  }
+});
 
-    <div id="textOptions" class="modal hidden">
-      <input type="text" id="textInput" placeholder="Enter text">
-      <input type="color" id="textColor" value="#000000">
-      <input type="number" id="textSize" min="10" max="100" value="20">
-      <button id="addText">Add Text</button>
-    </div>
+sendBtn.addEventListener('click', () => {
+  const msg = messageInput.value.trim();
+  if(msg){
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = username + ': ' + msg;
+    chatContainer.appendChild(msgDiv);
+    messageInput.value = '';
+    chatContainer.scrollTop = chatContainer.scrollHeight; // scroll otomatis
+  }
+});
+</script>
 
-    <div id="stickerOptions" class="modal hidden">
-      <img src="https://i.imgur.com/8Km9tLL.png" class="sticker" width="50">
-      <img src="https://i.imgur.com/TK8w1tC.png" class="sticker" width="50">
-    </div>
-
-    <div id="bgOptions" class="modal hidden">
-      <button id="removeBG">Toggle Transparent BG</button>
-    </div>
-
-    <!-- Download -->
-    <button id="download">Download</button>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
