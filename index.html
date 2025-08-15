@@ -3,94 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Ghosty Online Dummy</title>
+<title>One Piece Fan Game Dummy with Sprites</title>
 <style>
-  body { margin:0; background:#111; color:white; font-family:sans-serif; text-align:center; }
-  canvas { background:#222; display:block; margin:auto; border:2px solid #555; }
-  #score { margin-top:10px; font-size:18px; }
+  body { margin:0; overflow:hidden; background:#87CEEB; font-family:sans-serif; }
+  #gameCanvas { background:#87CEEB; display:block; margin:0 auto; }
+  .hud { position:absolute; top:10px; left:10px; color:white; font-weight:bold; }
 </style>
 </head>
 <body>
 
-<h2>Mini Ghosty Online Dummy</h2>
-<canvas id="gameCanvas" width="500" height="600"></canvas>
-<div id="score">Score: 0 | Time: 0s</div>
+<div class="hud" id="hud">Player HP: 100</div>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let player = {x:250, y:500, size:30, speed:5};
-let ghost = {x:250, y:100, size:30, speed:2};
-let dummyPlayers = [
-    {x:100, y:200, size:30},
-    {x:400, y:300, size:30},
-    {x:200, y:150, size:30}
-];
-let score = 0;
-let startTime = performance.now();
+// Load images
+const playerImg = new Image();
+playerImg.src = 'https://i.ibb.co/0D0y7cq/player.png'; // contoh dummy sprite
+const enemyImg1 = new Image();
+enemyImg1.src = 'https://i.ibb.co/VH2k4Xj/enemy1.png';
+const enemyImg2 = new Image();
+enemyImg2.src = 'https://i.ibb.co/9r9d1tM/enemy2.png';
 
-// Keyboard input
-const keys = {};
+let player = { x:100, y:300, width:50, height:50, hp:100 };
+let enemies = [
+  { x:600, y:300, width:50, height:50, hp:50 },
+  { x:700, y:300, width:50, height:50, hp:70 }
+];
+
+let keys = {};
 document.addEventListener('keydown', e => keys[e.key] = true);
 document.addEventListener('keyup', e => keys[e.key] = false);
 
-// Game loop
-function update(){
-    // Move player
-    if(keys['ArrowLeft']) player.x -= player.speed;
-    if(keys['ArrowRight']) player.x += player.speed;
-    if(keys['ArrowUp']) player.y -= player.speed;
-    if(keys['ArrowDown']) player.y += player.speed;
-    // Boundaries
-    if(player.x<0) player.x=0;
-    if(player.x>canvas.width-player.size) player.x=canvas.width-player.size;
-    if(player.y<0) player.y=0;
-    if(player.y>canvas.height-player.size) player.y=canvas.height-player.size;
+function drawSprite(img, obj){
+  ctx.drawImage(img, obj.x, obj.y, obj.width, obj.height);
+}
 
-    // Move ghost toward player
-    if(ghost.x < player.x) ghost.x += ghost.speed;
-    if(ghost.x > player.x) ghost.x -= ghost.speed;
-    if(ghost.y < player.y) ghost.y += ghost.speed;
-    if(ghost.y > player.y) ghost.y -= ghost.speed;
+function gameLoop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Move dummy players randomly
-    dummyPlayers.forEach(p=>{
-        p.x += Math.random()*4-2;
-        p.y += Math.random()*4-2;
-        if(p.x<0)p.x=0; if(p.x>canvas.width-p.size)p.x=canvas.width-p.size;
-        if(p.y<0)p.y=0; if(p.y>canvas.height-p.size)p.y=canvas.height-p.size;
-    });
+  // Player movement
+  if(keys['ArrowLeft']) player.x -= 5;
+  if(keys['ArrowRight']) player.x += 5;
+  if(keys[' ']) attack();
 
-    // Collision check (ghost vs player)
-    if(player.x < ghost.x+ghost.size && player.x+player.size>ghost.x &&
-       player.y < ghost.y+ghost.size && player.y+player.size>ghost.y){
-         alert("Game Over! Score: "+score+" | Time: "+Math.floor((performance.now()-startTime)/1000)+"s");
-         player.x=250; player.y=500; ghost.x=250; ghost.y=100; score=0; startTime=performance.now();
+  // Draw player
+  drawSprite(playerImg, player);
+
+  // Draw enemies & update
+  enemies.forEach(enemy => {
+    // Draw enemy sprite
+    if(enemy.hp > 0){
+      drawSprite(enemy === enemies[0] ? enemyImg1 : enemyImg2, enemy);
     }
 
-    score++;
+    // Collision check for attack
+    if(player.x + player.width > enemy.x && player.x < enemy.x + enemy.width){
+      if(keys[' ']) enemy.hp -= 1;
+      if(enemy.hp <= 0) enemy.hp = 0; // mark dead
+    }
+  });
 
-    draw();
-    requestAnimationFrame(update);
+  // Update HUD
+  let hudText = `Player HP: ${player.hp} | `;
+  enemies.forEach((e,i)=> hudText += `Enemy${i+1} HP: ${e.hp} | `);
+  document.getElementById('hud').innerText = hudText;
+
+  requestAnimationFrame(gameLoop);
 }
 
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    // Draw dummy players
-    ctx.fillStyle='green';
-    dummyPlayers.forEach(p=> ctx.fillRect(p.x,p.y,p.size,p.size));
-    // Draw player
-    ctx.fillStyle='blue';
-    ctx.fillRect(player.x, player.y, player.size, player.size);
-    // Draw ghost
-    ctx.fillStyle='red';
-    ctx.fillRect(ghost.x, ghost.y, ghost.size, ghost.size);
-    // Score / timer
-    document.getElementById('score').textContent = `Score: ${score} | Time: ${Math.floor((performance.now()-startTime)/1000)}s`;
+function attack(){
+  ctx.fillStyle='yellow';
+  ctx.fillRect(player.x + player.width, player.y + player.height/4, 20, 10);
 }
 
-update();
+gameLoop();
 </script>
 
 </body>
