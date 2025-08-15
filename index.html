@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DSRT — Landing + Canvas & 8 Fitur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{background:#0b0f1a}
+    .glass{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
+  </style>
+</head>
+<body class="text-white font-sans min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <header class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+    <h1 class="text-2xl font-bold tracking-wide">DSRT</h1>
+    <nav class="flex items-center gap-3">
+      <a href="#fitur" class="text-white/80 hover:text-white">Fitur</a>
+      <a href="login.html" class="px-4 py-2 bg-orange-500 rounded-lg hover:bg-orange-600 transition">Login</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="text-center px-6 pt-12 pb-10">
+    <h2 class="text-5xl font-extrabold mb-3">Digital Smart Revise Technology</h2>
+    <p class="text-white/70 max-w-3xl mx-auto">
+      Platform editing dan restorasi gambar modern. Coba pratinjau kanvas di bawah, lalu jelajahi 8 fitur utama kami.
+    </p>
+    <div class="mt-6">
+      <a href="dashboard.html" class="px-6 py-3 bg-orange-500 rounded-lg text-lg font-semibold hover:bg-orange-600 transition">
+        Mulai Sekarang
+      </a>
+    </div>
+  </section>
+
+  <!-- CANVAS + 8 BLOK BAR -->
+  <main class="max-w-6xl mx-auto w-full px-4 mb-16">
+    <!-- Canvas container -->
+    <div class="rounded-xl glass overflow-hidden">
+      <div class="p-4 bg-[#0e1530]">
+        <canvas id="cvs" width="1280" height="720" class="w-full block rounded-lg"></canvas>
+      </div>
+
+      <!-- Bar fitur 8 blok -->
+      <div class="grid grid-cols-4 md:grid-cols-8 gap-2 p-3 border-t border-white/10 bg-[#0c1226]/90">
+        <button data-tool="upload" class="btn">📁<span class="hidden md:inline">&nbsp;Pilih</span></button>
+        <button data-tool="adjust" class="btn">✂️<span class="hidden md:inline">&nbsp;Sesuaikan</span></button>
+        <button data-tool="filters" class="btn">🎛️<span class="hidden md:inline">&nbsp;Filter</span></button>
+        <button data-tool="mode" class="btn">🧠<span class="hidden md:inline">&nbsp;Mode</span></button>
+        <button data-tool="text" class="btn">🔤<span class="hidden md:inline">&nbsp;Teks</span></button>
+        <button data-tool="sticker" class="btn">🌟<span class="hidden md:inline">&nbsp;Stiker</span></button>
+        <button data-tool="preview" class="btn">👀<span class="hidden md:inline">&nbsp;Preview</span></button>
+        <button data-tool="save" class="btn">💾<span class="hidden md:inline">&nbsp;Simpan</span></button>
+      </div>
+    </div>
+
+    <!-- Panel mengambang untuk kontrol -->
+    <div id="panel" class="hidden fixed left-1/2 -translate-x-1/2 top-8 z-50 max-w-3xl w-[92%] glass rounded-xl p-4">
+      <div class="flex items-start justify-between gap-4">
+        <div id="panelTitle" class="text-lg font-semibold">Panel</div>
+        <button id="closePanel" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20">Tutup</button>
+      </div>
+      <div id="panelBody" class="mt-3 text-sm text-white/90"></div>
+    </div>
+  </main>
+
+  <!-- SECTION FITUR (detail) -->
+  <section id="fitur" class="max-w-6xl mx-auto w-full px-4 pb-20">
+    <h3 class="text-3xl font-bold text-center mb-10">Fitur Unggulan</h3>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass rounded-xl p-5">
+        <h4 class="font-semibold mb-1">📷 Smart Retouch</h4>
+        <p class="text-white/70 text-sm">Hapus objek tak diinginkan dengan sekali klik.</p>
+      </div>
+      <div class="glass rounded-xl p-5">
+        <h4 class="font-semibold mb-1">🎨 Color Enhance</h4>
+        <p class="text-white/70 text-sm">Tingkatkan warna agar lebih hidup dan natural.</p>
+      </div>
+      <div class="glass rounded-xl p-5">
+        <h4 class="font-semibold mb-1">🖼️ Background Cut</h4>
+        <p class="text-white/70 text-sm">Pisahkan objek & ganti latar belakang cepat.</p>
+      </div>
+      <div class="glass rounded-xl p-5">
+        <h4 class="font-semibold mb-1">🧠 Mode AI</h4>
+        <p class="text-white/70 text-sm">Light, HD, Colorize, Kerusakan Berat (mock).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 text-center border-t border-white/10 text-white/60">
+    © 2025 DSRT. Semua hak dilindungi.
+  </footer>
+
+  <script>
+    // ==== util style tombol ====
+    document.querySelectorAll('.btn').forEach(b=>{
+      b.classList.add('px-3','py-2','rounded-lg','bg-white/10','hover:bg-white/20','transition','text-sm','text-white','flex','items-center','justify-center')
+    });
+
+    // ==== state canvas ====
+    const canvas = document.getElementById('cvs'), ctx = canvas.getContext('2d');
+    const state = {
+      img:null, scale:1, rotation:0,
+      brightness:100, contrast:100, saturation:100,
+      mode:'light', texts:[], stickers:[]
+    };
+
+    function draw() {
+      ctx.fillStyle = '#0e1530'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.filter = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturation}%)`;
+      if (state.img) {
+        const iw = state.img.width, ih = state.img.height;
+        const ratio = Math.min(canvas.width/iw, canvas.height/ih);
+        const w = iw*ratio, h = ih*ratio;
+        ctx.save();
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.rotate(state.rotation*Math.PI/180);
+        ctx.scale(state.scale, state.scale);
+        ctx.drawImage(state.img, -w/2, -h/2, w, h);
+        ctx.restore();
+      }
+      ctx.filter = 'none';
+      state.texts.forEach(t=>{
+        ctx.font = `${t.size||36}px Inter, system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.strokeStyle = 'rgba(0,0,0,.5)'; ctx.lineWidth = 4;
+        ctx.strokeText(t.text,t.x,t.y);
+        ctx.fillStyle = 'white'; ctx.fillText(t.text,t.x,t.y);
+      });
+      state.stickers.forEach(s=>{
+        ctx.font = `${s.size||64}px sans-serif`; ctx.textAlign='center';
+        ctx.fillText(s.emoji, s.x, s.y);
+      });
+      ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='12px Inter';
+      ctx.fillText(`Mode: ${state.mode}`, canvas.width-70, canvas.height-12);
+    }
+    draw();
+
+    // ==== panel ====
+    const panel = document.getElementById('panel');
+    const panelTitle = document.getElementById('panelTitle');
+    const panelBody = document.getElementById('panelBody');
+    document.getElementById('closePanel').onclick = ()=>panel.classList.add('hidden');
+    function openPanel(title, html) {
+      panelTitle.textContent = title;
+      panelBody.innerHTML = html;
+      panel.classList.remove('hidden');
+    }
+
+    // ==== tools ====
+    document.querySelectorAll('[data-tool]').forEach(btn=>{
+      btn.onclick = ()=>{
+        const t = btn.dataset.tool;
+
+        if (t==='upload') {
+          openPanel('Pilih Gambar', `
+            <input id="file" type="file" accept="image/*"
+              class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/20 file:text-white hover:file:bg-white/30"/>
+            <p class="mt-2 text-white/70 text-xs">JPG/PNG, di-fit ke kanvas.</p>
+          `);
+          panelBody.querySelector('#file').onchange = e=>{
+            const f=e.target.files[0]; if(!f) return;
+            const img=new Image(); img.onload=()=>{state.img=img; draw()}; img.src=URL.createObjectURL(f);
+          };
+        }
+
+        if (t==='adjust') {
+          openPanel('Potong & Sesuaikan', `
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <label class="block">Zoom
+                <input id="scale" type="range" min="0.2" max="2" step="0.05" value="${state.scale}" class="w-full">
+              </label>
+              <label class="block">Rotasi
+                <input id="rotation" type="range" min="-180" max="180" step="1" value="${state.rotation}" class="w-full">
+              </label>
+              <div class="flex items-end gap-2">
+                <button id="flipH" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Flip H</button>
+                <button id="flipV" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Flip V</button>
+                <button id="cropSquare" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Crop Square (auto)</button>
+              </div>
+            </div>
+          `);
+          panelBody.querySelector('#scale').oninput=e=>{state.scale=+e.target.value; draw()};
+          panelBody.querySelector('#rotation').oninput=e=>{state.rotation=+e.target.value; draw()};
+          panelBody.querySelector('#flipH').onclick=()=>{state.scale=-state.scale; draw()};
+          panelBody.querySelector('#flipV').onclick=()=>{state.rotation=(state.rotation+180)%360; state.scale=-state.scale; draw()};
+          panelBody.querySelector('#cropSquare').onclick=()=>{
+            const size=Math.min(canvas.width,canvas.height);
+            const sx=(canvas.width-size)/2, sy=(canvas.height-size)/2;
+            const imgData=ctx.getImageData(sx,sy,size,size);
+            canvas.width=canvas.height=720; ctx.putImageData(imgData,0,0); draw();
+          };
+        }
+
+        if (t==='filters') {
+          openPanel('Filter & Warna', `
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <label class="block">Brightness
+                <input id="bri" type="range" min="50" max="150" value="${state.brightness}" class="w-full">
+              </label>
+              <label class="block">Contrast
+                <input id="con" type="range" min="50" max="150" value="${state.contrast}" class="w-full">
+              </label>
+              <label class="block">Saturation
+                <input id="sat" type="range" min="0" max="150" value="${state.saturation}" class="w-full">
+              </label>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button id="presetVivid" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Preset: Vivid</button>
+              <button id="presetMono" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Preset: Monokrom</button>
+              <button id="resetFilter" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Reset</button>
+            </div>
+          `);
+          panelBody.querySelector('#bri').oninput=e=>{state.brightness=+e.target.value; draw()};
+          panelBody.querySelector('#con').oninput=e=>{state.contrast=+e.target.value; draw()};
+          panelBody.querySelector('#sat').oninput=e=>{state.saturation=+e.target.value; draw()};
+          panelBody.querySelector('#presetVivid').onclick=()=>{state.brightness=110; state.contrast=120; state.saturation=135; draw()};
+          panelBody.querySelector('#presetMono').onclick=()=>{state.saturation=0; draw()};
+          panelBody.querySelector('#resetFilter').onclick=()=>{state.brightness=100; state.contrast=100; state.saturation=100; draw()};
+        }
+
+        if (t==='mode') {
+          openPanel('Mode Perbaikan (Mock)', `
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+              ${['light','hd','colorize','kerusakan_berat'].map(m=>`
+                <button data-mode="${m}" class="modeBtn px-3 py-2 rounded-lg ${state.mode===m?'bg-orange-500':'bg-white/10 hover:bg-white/20'}">${m}</button>
+              `).join('')}
+            </div>
+            <p class="mt-2 text-white/70 text-xs">Ini prototype UI; mode sebenarnya akan panggil pipeline backend.</p>
+          `);
+          panelBody.querySelectorAll('.modeBtn').forEach(b=>{
+            b.onclick=()=>{
+              state.mode=b.dataset.mode;
+              panelBody.querySelectorAll('.modeBtn').forEach(x=>x.classList.remove('bg-orange-500'));
+              b.classList.add('bg-orange-500'); draw();
+            }
+          });
+        }
+
+        if (t==='text') {
+          openPanel('Teks & Label', `
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <input id="txt" placeholder="Tulis teks..." class="px-3 py-2 rounded-lg bg-white/10 focus:outline-none focus:ring-2 focus:ring-orange-500"/>
+              <input id="tx" type="number" placeholder="X" class="px-3 py-2 rounded-lg bg-white/10" value="640"/>
+              <input id="ty" type="number" placeholder="Y" class="px-3 py-2 rounded-lg bg-white/10" value="360"/>
+              <input id="ts" type="number" placeholder="Ukuran" class="px-3 py-2 rounded-lg bg-white/10" value="48"/>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button id="addText" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Tambahkan</button>
+              <button id="clearText" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Hapus Semua</button>
+            </div>
+          `);
+          panelBody.querySelector('#addText').onclick=()=>{
+            const text=panelBody.querySelector('#txt').value||'Teks';
+            const x=+panelBody.querySelector('#tx').value||640;
+            const y=+panelBody.querySelector('#ty').value||360;
+            const size=+panelBody.querySelector('#ts').value||48;
+            state.texts.push({text,x,y,size}); draw();
+          };
+          panelBody.querySelector('#clearText').onclick=()=>{state.texts=[]; draw()};
+        }
+
+        if (t==='sticker') {
+          openPanel('Stiker / Overlay', `
+            <div class="flex flex-wrap gap-2 mb-3">
+              ${['✨','🔥','❤️','👍','🎯','⭐','💎','⚡','🎵','🤖'].map(e=>`
+                <button class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 sticker">${e}</button>
+              `).join('')}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-white/80 text-sm">Ukuran</span>
+              <input id="stkSize" type="range" min="24" max="128" value="64" class="w-48">
+              <button id="clearSticker" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20">Hapus Semua</button>
+            </div>
+          `);
+          panelBody.querySelectorAll('.sticker').forEach(s=>{
+            s.onclick=()=>{
+              const emoji=s.textContent.trim();
+              const size=+panelBody.querySelector('#stkSize').value||64;
+              state.stickers.push({emoji, x:canvas.width/2, y:canvas.height/2, size}); draw();
+            }
+          });
+          panelBody.querySelector('#clearSticker').onclick=()=>{state.stickers=[]; draw()};
+        }
+
+        if (t==='preview') {
+          openPanel('Pratinjau', `
+            <div class="rounded-lg overflow-hidden border border-white/10">
+              <img src="${canvas.toDataURL('image/png')}" class="w-full"/>
+            </div>
+          `);
+        }
+
+        if (t==='save') {
+          const a=document.createElement('a');
+          a.download=`dsrt-${Date.now()}.png`;
+          a.href=canvas.toDataURL('image/png'); a.click();
+        }
+      }
+    });
+
+    // klik kanvas: pindah posisi item terakhir (teks/stiker)
+    canvas.addEventListener('click', e=>{
+      const r=canvas.getBoundingClientRect();
+      const x=(e.clientX-r.left)*(canvas.width/r.width);
+      const y=(e.clientY-r.top)*(canvas.height/r.height);
+      if (state.texts.length){ state.texts.at(-1).x=x; state.texts.at(-1).y=y; draw(); return; }
+      if (state.stickers.length){ state.stickers.at(-1).x=x; state.stickers.at(-1).y=y; draw(); }
+    });
+  </script>
+</body>
+</html>
