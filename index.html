@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Ghosty Online</title>
+<title>Mini Ghosty Online Dummy</title>
 <style>
   body { margin:0; background:#111; color:white; font-family:sans-serif; text-align:center; }
   canvas { background:#222; display:block; margin:auto; border:2px solid #555; }
@@ -12,18 +12,23 @@
 </head>
 <body>
 
-<h2>Mini Ghosty Online (PC Demo)</h2>
-<canvas id="gameCanvas" width="400" height="600"></canvas>
+<h2>Mini Ghosty Online Dummy</h2>
+<canvas id="gameCanvas" width="500" height="600"></canvas>
 <div id="score">Score: 0 | Time: 0s</div>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let player = {x:200, y:500, size:30, speed:5};
-let ghost = {x:200, y:100, size:30, speed:2};
+let player = {x:250, y:500, size:30, speed:5};
+let ghost = {x:250, y:100, size:30, speed:2};
+let dummyPlayers = [
+    {x:100, y:200, size:30},
+    {x:400, y:300, size:30},
+    {x:200, y:150, size:30}
+];
 let score = 0;
-let time = 0;
+let startTime = performance.now();
 
 // Keyboard input
 const keys = {};
@@ -43,40 +48,46 @@ function update(){
     if(player.y<0) player.y=0;
     if(player.y>canvas.height-player.size) player.y=canvas.height-player.size;
 
-    // Simple ghost AI: move toward player
+    // Move ghost toward player
     if(ghost.x < player.x) ghost.x += ghost.speed;
     if(ghost.x > player.x) ghost.x -= ghost.speed;
     if(ghost.y < player.y) ghost.y += ghost.speed;
     if(ghost.y > player.y) ghost.y -= ghost.speed;
 
-    // Collision check
+    // Move dummy players randomly
+    dummyPlayers.forEach(p=>{
+        p.x += Math.random()*4-2;
+        p.y += Math.random()*4-2;
+        if(p.x<0)p.x=0; if(p.x>canvas.width-p.size)p.x=canvas.width-p.size;
+        if(p.y<0)p.y=0; if(p.y>canvas.height-p.size)p.y=canvas.height-p.size;
+    });
+
+    // Collision check (ghost vs player)
     if(player.x < ghost.x+ghost.size && player.x+player.size>ghost.x &&
        player.y < ghost.y+ghost.size && player.y+player.size>ghost.y){
-         alert("Game Over! Score: "+score+" | Time: "+time+"s");
-         // reset game
-         player.x=200; player.y=500; ghost.x=200; ghost.y=100;
-         score=0; time=0;
+         alert("Game Over! Score: "+score+" | Time: "+Math.floor((performance.now()-startTime)/1000)+"s");
+         player.x=250; player.y=500; ghost.x=250; ghost.y=100; score=0; startTime=performance.now();
     }
 
-    // Increase score & time
     score++;
-    time = Math.floor(performance.now()/1000);
 
-    // Draw everything
     draw();
     requestAnimationFrame(update);
 }
 
 function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    // Player
+    // Draw dummy players
+    ctx.fillStyle='green';
+    dummyPlayers.forEach(p=> ctx.fillRect(p.x,p.y,p.size,p.size));
+    // Draw player
     ctx.fillStyle='blue';
     ctx.fillRect(player.x, player.y, player.size, player.size);
-    // Ghost
+    // Draw ghost
     ctx.fillStyle='red';
     ctx.fillRect(ghost.x, ghost.y, ghost.size, ghost.size);
-    // Score / timer displayed above canvas
-    document.getElementById('score').textContent = `Score: ${score} | Time: ${time}s`;
+    // Score / timer
+    document.getElementById('score').textContent = `Score: ${score} | Time: ${Math.floor((performance.now()-startTime)/1000)}s`;
 }
 
 update();
