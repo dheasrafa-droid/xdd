@@ -3,80 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>One Piece Fan Game Dummy with Sprites</title>
+<title>Demo Fan Battle Game</title>
 <style>
-  body { margin:0; overflow:hidden; background:#87CEEB; font-family:sans-serif; }
-  #gameCanvas { background:#87CEEB; display:block; margin:0 auto; }
-  .hud { position:absolute; top:10px; left:10px; color:white; font-weight:bold; }
+  body { margin:0; overflow:hidden; background:#333; font-family:sans-serif; }
+  #gameCanvas { display:block; margin:0 auto; background:#555; }
+  .hud { position:absolute; top:10px; left:10px; color:white; font-weight:bold; font-size:18px; }
+  .skills { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); }
+  .skills button { margin:5px; padding:10px 20px; font-size:16px; }
 </style>
 </head>
 <body>
 
-<div class="hud" id="hud">Player HP: 100</div>
-<canvas id="gameCanvas" width="800" height="400"></canvas>
+<div class="hud" id="hud">Player HP: 100 | Enemy HP: 80</div>
+<div class="skills">
+  <button onclick="normalAttack()">Attack</button>
+  <button onclick="skill1()">Skill 1</button>
+  <button onclick="skill2()">Skill 2</button>
+</div>
+<canvas id="gameCanvas"></canvas>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Load images
-const playerImg = new Image();
-playerImg.src = 'https://i.ibb.co/0D0y7cq/player.png'; // contoh dummy sprite
-const enemyImg1 = new Image();
-enemyImg1.src = 'https://i.ibb.co/VH2k4Xj/enemy1.png';
-const enemyImg2 = new Image();
-enemyImg2.src = 'https://i.ibb.co/9r9d1tM/enemy2.png';
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-let player = { x:100, y:300, width:50, height:50, hp:100 };
-let enemies = [
-  { x:600, y:300, width:50, height:50, hp:50 },
-  { x:700, y:300, width:50, height:50, hp:70 }
-];
+// Dummy characters
+let player = { x:100, y:canvas.height - 150, width:60, height:60, hp:100, color:'blue' };
+let enemy = { x:canvas.width - 200, y:canvas.height - 150, width:60, height:60, hp:80, color:'red' };
 
-let keys = {};
-document.addEventListener('keydown', e => keys[e.key] = true);
-document.addEventListener('keyup', e => keys[e.key] = false);
+let attackAnimations = [];
 
-function drawSprite(img, obj){
-  ctx.drawImage(img, obj.x, obj.y, obj.width, obj.height);
+function drawChar(obj){
+  ctx.fillStyle = obj.color;
+  ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+}
+
+// Add attack effect
+function addAttackEffect(x, y, color){
+  attackAnimations.push({ x, y, size:20, color, life:20 });
+}
+
+function normalAttack(){
+  // Deal damage
+  enemy.hp -= 5;
+  addAttackEffect(enemy.x, enemy.y + enemy.height/4, 'yellow');
+  updateHUD();
+}
+
+function skill1(){
+  // Stronger attack
+  enemy.hp -= 15;
+  addAttackEffect(enemy.x, enemy.y + enemy.height/4, 'orange');
+  updateHUD();
+}
+
+function skill2(){
+  // Multi-hit effect
+  for(let i=0;i<3;i++){
+    enemy.hp -= 5;
+    addAttackEffect(enemy.x + i*10, enemy.y + enemy.height/4, 'purple');
+  }
+  updateHUD();
+}
+
+function updateHUD(){
+  if(player.hp<0) player.hp=0;
+  if(enemy.hp<0) enemy.hp=0;
+  document.getElementById('hud').innerText = `Player HP: ${player.hp} | Enemy HP: ${enemy.hp}`;
 }
 
 function gameLoop(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // Player movement
-  if(keys['ArrowLeft']) player.x -= 5;
-  if(keys['ArrowRight']) player.x += 5;
-  if(keys[' ']) attack();
+  drawChar(player);
+  drawChar(enemy);
 
-  // Draw player
-  drawSprite(playerImg, player);
-
-  // Draw enemies & update
-  enemies.forEach(enemy => {
-    // Draw enemy sprite
-    if(enemy.hp > 0){
-      drawSprite(enemy === enemies[0] ? enemyImg1 : enemyImg2, enemy);
-    }
-
-    // Collision check for attack
-    if(player.x + player.width > enemy.x && player.x < enemy.x + enemy.width){
-      if(keys[' ']) enemy.hp -= 1;
-      if(enemy.hp <= 0) enemy.hp = 0; // mark dead
-    }
+  // Draw attack animations
+  attackAnimations.forEach((a,i)=>{
+    ctx.fillStyle = a.color;
+    ctx.fillRect(a.x, a.y, a.size, a.size);
+    a.life--;
+    if(a.life<=0) attackAnimations.splice(i,1);
   });
 
-  // Update HUD
-  let hudText = `Player HP: ${player.hp} | `;
-  enemies.forEach((e,i)=> hudText += `Enemy${i+1} HP: ${e.hp} | `);
-  document.getElementById('hud').innerText = hudText;
-
   requestAnimationFrame(gameLoop);
-}
-
-function attack(){
-  ctx.fillStyle='yellow';
-  ctx.fillRect(player.x + player.width, player.y + player.height/4, 20, 10);
 }
 
 gameLoop();
