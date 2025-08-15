@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+.container { max-width: 700px; width: 100%; }
+canvas { border: 1px solid #ccc; display: block; margin: 10px 0; }
+.tabs button { margin-right: 5px; padding: 5px 10px; }
+.modal { margin: 10px 0; }
+.hidden { display: none; }
