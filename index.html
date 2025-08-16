@@ -1,49 +1,382 @@
-def generate_code(title, script, duration):
-    # === Kode HTML ===
-    html_code = f"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>{title}</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Necromancer vs Guardian — Episode 1 (Interaktif)</title>
+<style>
+  :root{--bg:#050508;--panel:#0f1115;--muted:#333;--text:#eaeaf2;--accent:#8b5cf6}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#030305 0%,#0b0b0f 100%);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,Helvetica,sans-serif}
+  .container{max-width:1200px;margin:18px auto;padding:16px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{margin:0;font-size:20px}
+  .player{
+    margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);
+    background:#000;position:relative;height:64vh;min-height:420px;display:flex;flex-direction:column;
+  }
+  .scene{
+    flex:1;background-size:cover;background-position:center center;position:relative;display:flex;align-items:flex-end;justify-content:center;
+  }
+  .subtitle{
+    width:calc(100% - 48px); margin:0 24px 28px; text-align:center; font-size:20px; line-height:1.45;
+    padding:12px 18px; border-radius:10px; background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.45));
+    box-shadow:0 6px 20px rgba(0,0,0,0.6);
+  }
+  .controls{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.03);align-items:center;background:linear-gradient(180deg, rgba(10,10,12,0.7), rgba(0,0,0,0.5))}
+  button{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;cursor:pointer}
+  button:hover{transform:translateY(-1px)}
+  .small{padding:6px 8px;font-size:14px}
+  .progress{flex:1;height:8px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;margin:0 12px}
+  .bar{height:100%;background:linear-gradient(90deg,var(--accent),#06b6d4);width:0%}
+  .meta{display:flex;gap:14px;align-items:center;font-size:13px;color:rgba(255,255,255,0.85)}
+  .select{background:#0d0d10;color:var(--text);border-radius:8px;padding:6px}
+  footer{margin-top:14px;color:#c9c9d6;font-size:13px;opacity:0.9}
+  @media (max-width:720px){ .subtitle{font-size:16px;margin:0 10px 18px} .meta{font-size:12px} }
+</style>
 </head>
 <body>
-    <h1>{title}</h1>
-    <video controls width="800">
-        <source src="episode1.mp4" type="video/mp4">
-        <track src="episode1_id.vtt" kind="subtitles" srclang="id" label="Indonesia">
-    </video>
+  <div class="container">
+    <header>
+      <div>
+        <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#06b6d4);font-weight:700;font-size:12px">EPISODE 1</span>
+        <h1>Necromancer vs Guardian — Episode 1 (Interaktif)</h1>
+      </div>
+      <div class="meta">
+        <div id="totalTime">Durasi target: 30:00</div>
+        <label style="display:flex;align-items:center;gap:8px">
+          <span style="opacity:0.8">Suara:</span>
+          <select id="voicePreset" class="select" title="Pilih karakter suara">
+            <option value="narator">Narator (netral)</option>
+            <option value="necromancer">Necromancer (gelap)</option>
+            <option value="guardian">Guardian (heroik)</option>
+          </select>
+        </label>
+        <button id="toggleSub" class="small">Tampilkan Subtitle</button>
+      </div>
+    </header>
+
+    <div class="player" role="region" aria-label="Player interaktif">
+      <div id="scene" class="scene" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)), url('https://picsum.photos/seed/1/1600/900')">
+        <div id="subtitle" class="subtitle">Klik <strong>Mulai</strong> untuk memulai cerita. Subtitle akan muncul di sini.</div>
+      </div>
+
+      <div class="controls">
+        <button id="playPause" class="small">▶ Mulai</button>
+        <button id="prevBtn" class="small">⟲ Prev</button>
+        <button id="nextBtn" class="small">Next ⟳</button>
+
+        <div class="progress" title="Progress">
+          <div id="bar" class="bar"></div>
+        </div>
+
+        <div class="meta">
+          <div id="timeLabel">00:00 / 30:00</div>
+          <label style="display:flex;align-items:center;gap:6px">
+            <span style="opacity:0.8">Volume</span>
+            <input id="vol" type="range" min="0" max="1" step="0.05" value="1" />
+          </label>
+        </div>
+
+        <button id="downloadTranscript" class="small">⬇ Transkrip</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Catatan: suara menggunakan Web Speech API (TTS) bawaan browser. Kualitas & pilihan suara bergantung pada browser & sistem operasi. Ini adalah pemutaran interaktif — bukan file .mp4.</p>
+    </footer>
+  </div>
+
+<script>
+/* ========= Data Alur — 12 Babak (masing-masing ~150 detik -> total ~1800s = 30min) =========
+   Ubah teks, gambar, atau durasi jika perlu.
+*/
+const scenes = [
+  { id:1, title:"Prolog — Dunia Gelap yang Terbangun", duration:150,
+    img:"https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Di tanah yang pernah damai, bayangan mulai menelan tepi dunia. 
+    Bisik-bisik dari kuburan tua bangkit mengikuti langkah sang Necromancer. 
+    Angin membawa aroma abu, dan bintang-bintang menatap dengan mata yang lesu.` },
+
+  { id:2, title:"Kebangkitan Necromancer", duration:150,
+    img:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=60",
+    role:"necromancer",
+    text:`Di tengah lingkaran rune, Necromancer mengangkat tongkatnya yang berukir tengkorak. 
+    Cahaya ungu merambat, tanah retak, dan dari retakan muncul tangan-tangan kosong yang meraih cahaya.` },
+
+  { id:3, title:"Harapan Terakhir: Guardian", duration:150,
+    img:"https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Di atas benteng yang tersisa, sang Guardian menajamkan pedang dan memeriksa perisainya. 
+    Wajahnya letih, tetapi matanya menyala dengan tekad yang tak kau temukan lagi di dunia ini.` },
+
+  { id:4, title:"Benturan Pertama", duration:150,
+    img:"https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=1600&q=60",
+    role:"guardian",
+    text:`Pertemuan mereka di dataran runtuh membuat udara bergetar. 
+    Necromancer berbicara dingin: 'Kau hanya obor kecil.' 
+    Guardian membalas, 'Obor itu akan membakar malammu.' 
+    Pedang dan tongkat bersinggungan, sinar dan bayangan menari.` },
+
+  { id:5, title:"Gelombang Undead", duration:150,
+    img:"https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Dari segala penjuru, pasukan mayat hidup menyerbu seperti ombak. 
+    Setiap langkah mereka membekukan tanah, dan setiap teriakan mereka memecah malam. 
+    Guardian berdiri berada di antara manusia dan kehancuran.` },
+
+  { id:6, title:"Pertahanan Cahaya", duration:150,
+    img:"https://images.unsplash.com/photo-1501674513306-9f0f6d96a0f9?auto=format&fit=crop&w=1600&q=60",
+    role:"guardian",
+    text:`Dengan serangkaian gerakan ritus, Guardian menimbulkan kubah cahaya yang menahan gelombang kegelapan. 
+    Namun kubah itu menipis—energi suci tak tak terbatas. 
+    Di balik cahaya, kehendak manusia menjadi bahan bakar terakhir.` },
+
+  { id:7, title:"Kehancuran Desa", duration:150,
+    img:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Di kejauhan, desa terpental menjadi bara. Rumah-rumah runtuh, dan anak-anak menyanyikan doa yang patah. 
+    Guardian menyaksikan kehancuran itu—setiap wajah adalah satu alasan untuk bertarung.` },
+
+  { id:8, title:"Duel Sihir", duration:150,
+    img:"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=60",
+    role:"necromancer",
+    text:`Necromancer melepaskan mantera-mantera lama yang berputar seperti awan hitam. 
+    Tombak bayangan menusuk udara, namun Guardian melesakkan pedang cahaya yang memecah kegelapan itu. 
+    Suara denting pedang dan gelak tawa si penyihir bergema.` },
+
+  { id:9, title:"Cahaya yang Meredup", duration:150,
+    img:"https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Langit seperti menutup muka. Cahaya menjadi remang-remang; bintang-bintang layu. 
+    Guardian terhuyung, darah mengalir—namun hatinya tetap setia pada sumpahnya.` },
+
+  { id:10, title:"Harapan dari Rakyat", duration:150,
+    img:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Dari kota-kota jauh, suara-suara bergabung jadi doa. Sebuah melodi harapan menyusup ke medan perang. 
+    Perisai Guardian sedikit bersinar; ada kekuatan yang kembali.` },
+
+  { id:11, title:"Pertarungan Akhir", duration:150,
+    img:"https://images.unsplash.com/photo-1501674513306-9f0f6d96a0f9?auto=format&fit=crop&w=1600&q=60",
+    role:"guardian",
+    text:`Semua tersisa beradu di saat final. Pedang menjadi pilar cahaya, tongkat menjadi badai bayangan. 
+    Gerakan mereka cepat, berani, dan penuh dengan pengorbanan. Ini bukan hanya pertempuran fisik—ini adalah pertarungan untuk jiwa dunia.` },
+
+  { id:12, title:"Epilog — Kemenangan atau Bayangan Baru", duration:150,
+    img:"https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=1600&q=60",
+    role:"narator",
+    text:`Hening menyusup saat debu mengendap. Entah cahaya menang, entah malam mengikat dunia—yang pasti, sesuatu baru telah dimulai. 
+    Episode ini usai, tetapi bayangan baru mungkin saja sedang menunggu di luar cakrawala.` }
+];
+
+// ====== Sistem playback & UI ======
+const totalDuration = scenes.reduce((s,sc)=> s + sc.duration, 0);
+const formattedTotal = secsToHMS(totalDuration);
+document.getElementById('totalTime').innerText = `Durasi target: ${formattedTotal}`;
+
+let idx = 0;
+let playing = false;
+let sceneTimer = null;
+let speakUtterance = null;
+
+const subtitleEl = document.getElementById('subtitle');
+const sceneEl = document.getElementById('scene');
+const playBtn = document.getElementById('playPause');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const bar = document.getElementById('bar');
+const timeLabel = document.getElementById('timeLabel');
+const vol = document.getElementById('vol');
+const toggleSub = document.getElementById('toggleSub');
+const voicePreset = document.getElementById('voicePreset');
+const downloadBtn = document.getElementById('downloadTranscript');
+
+let elapsed = 0; // seconds overall
+let elapsedInScene = 0;
+
+vol.addEventListener('input', ()=> {
+  window._playerVolume = parseFloat(vol.value);
+});
+
+let subsShown = true;
+toggleSub.addEventListener('click', ()=> {
+  subsShown = !subsShown;
+  document.getElementById('subtitle').style.display = subsShown ? 'block' : 'none';
+  toggleSub.innerText = subsShown ? 'Sembunyikan Subtitle' : 'Tampilkan Subtitle';
+});
+
+playBtn.addEventListener('click', ()=> {
+  if (!playing) start(); else pause();
+});
+prevBtn.addEventListener('click', ()=> { gotoScene(Math.max(0, idx-1)); });
+nextBtn.addEventListener('click', ()=> { gotoScene(Math.min(scenes.length-1, idx+1)); });
+
+downloadBtn.addEventListener('click', ()=> {
+  const text = scenes.map((s,i)=> `${i+1}. ${s.title}\n\n${s.text}\n\n`).join('\n');
+  downloadFile('transcript_episode1.txt', text);
+});
+
+function start(){
+  if (playing) return;
+  playing = true;
+  playBtn.innerText = '⏸ Jeda';
+  playScene(idx);
+}
+
+function pause(){
+  playing = false;
+  playBtn.innerText = '▶ Lanjut';
+  clearTimersAndSpeech();
+}
+
+function gotoScene(newIdx){
+  clearTimersAndSpeech();
+  idx = newIdx;
+  elapsed = scenes.slice(0, idx).reduce((s,sc)=> s + sc.duration, 0);
+  elapsedInScene = 0;
+  updateProgress();
+  if (playing) playScene(idx);
+  else renderSceneVisual(idx);
+}
+
+function playScene(i){
+  if (i < 0 || i >= scenes.length) {
+    endPlayback();
+    return;
+  }
+  idx = i;
+  renderSceneVisual(i);
+  speakScene(scenes[i]);
+  sceneTimer = setTimeout(()=> {
+    cancelSpeech();
+    idx++;
+    elapsed += scenes[i].duration;
+    elapsedInScene = 0;
+    if (idx >= scenes.length){ endPlayback(); return; }
+    if (playing) playScene(idx);
+  }, scenes[i].duration * 1000);
+
+  let secondsLeft = scenes[i].duration;
+  const perSec = ()=> {
+    if (!playing) return;
+    secondsLeft--;
+    elapsedInScene++;
+    updateProgress();
+    if (secondsLeft <= 0) return;
+    setTimeout(perSec, 1000);
+  };
+  setTimeout(perSec, 1000);
+}
+
+function renderSceneVisual(i){
+  const sc = scenes[i];
+  sceneEl.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)), url('${sc.img}')`;
+  subtitleEl.innerText = sc.text;
+  updateProgress();
+}
+
+function speakScene(scene){
+  if (!('speechSynthesis' in window)) return;
+  cancelSpeech();
+
+  const utter = new SpeechSynthesisUtterance(scene.text);
+  utter.lang = 'id-ID';
+  const preset = voicePreset.value || scene.role || 'narator';
+  if (preset === 'necromancer'){
+    utter.rate = 0.86;
+    utter.pitch = 0.6;
+    pickVoiceByKeyword(['male','deep','bapak','pak','id']);
+  } else if (preset === 'guardian'){
+    utter.rate = 1.02;
+    utter.pitch = 1.05;
+    pickVoiceByKeyword(['male','bapak','cool','id']);
+  } else {
+    utter.rate = 0.95;
+    utter.pitch = 1.0;
+    pickVoiceByKeyword(['female','neutral','id']);
+  }
+  try { utter.volume = window._playerVolume || 1.0; } catch(e){}
+  speakUtterance = utter;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+  utter.onend = ()=> {};
+}
+
+function pickVoiceByKeyword(keywords){
+  if (!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || !voices.length) return;
+  const lowered = voices.map(v=>{
+    return {name:v.name.toLowerCase(),lang:v.lang.toLowerCase(),voice:v};
+  });
+  for (const kw of keywords){
+    const found = lowered.find(x => x.name.includes(kw) || x.lang.includes(kw));
+    if (found) { speakUtterance.voice = found.voice; return; }
+  }
+  const idv = lowered.find(x => x.lang.startsWith('id'));
+  if (idv) { speakUtterance.voice = idv.voice; return; }
+  if (voices[0]) speakUtterance.voice = voices[0];
+}
+
+function cancelSpeech(){
+  try { window.speechSynthesis.cancel(); } catch(e){}
+  if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+}
+
+function endPlayback(){
+  playing = false;
+  cancelSpeech();
+  playBtn.innerText = '▶ Mulai';
+  idx = scenes.length;
+  elapsed = totalDuration;
+  updateProgress();
+  subtitleEl.innerText = "— Tamat Episode 1 —";
+}
+
+function updateProgress(){
+  const total = totalDuration;
+  const currentElapsed = Math.min(elapsed + elapsedInScene, total);
+  const pct = total ? Math.round((currentElapsed / total) * 10000)/100 : 0;
+  bar.style.width = pct + '%';
+  timeLabel.innerText = formatHMS(currentElapsed) + ' / ' + formatHMS(total);
+}
+
+function formatHMS(s){
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  return (h>0? String(h).padStart(2,'0')+':' : '') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function secsToHMS(s){
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60);
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+
+function downloadFile(name, content){
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  URL.revokeObjectURL(link.href);
+  link.remove();
+}
+
+if ('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = ()=> { /* voices refreshed */ };
+}
+
+renderSceneVisual(0);
+updateProgress();
+
+document.addEventListener('keydown', (e)=>{
+  if (e.code === 'Space'){ e.preventDefault(); if (!playing) start(); else pause(); }
+  else if (e.key==='ArrowRight'){ gotoScene(Math.min(scenes.length-1, idx+1)); }
+  else if (e.key==='ArrowLeft'){ gotoScene(Math.max(0, idx-1)); }
+});
+
+</script>
 </body>
 </html>
-"""
-
-    # === Kode Python untuk buat video ===
-    python_code = f'''from moviepy.editor import *
-from gtts import gTTS
-
-script = """{script}"""
-tts = gTTS(script, lang="id")
-tts.save("narasi.mp3")
-
-bg = ImageClip("bg.jpg").set_duration({duration})
-narasi = AudioFileClip("narasi.mp3")
-
-final_video = CompositeVideoClip([bg])
-final_video = final_video.set_audio(narasi)
-final_video.write_videofile("episode1.mp4", fps=24)
-'''
-
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html_code)
-
-    with open("generate.py", "w", encoding="utf-8") as f:
-        f.write(python_code)
-
-    print("✅ Selesai! File index.html & generate.py sudah dibuat.")
-
-
-# === Contoh pemakaian ===
-generate_code(
-    title="Episode 1: Necromancer vs Guardian",
-    script="Di tanah gelap, bangkitlah Necromancer... (isi narasi lengkap 30 menit)",
-    duration=1800  # 30 menit = 1800 detik
-)
