@@ -1,63 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Mini Anime Demo</title>
-<style>
-  body { margin:0; overflow:hidden; background:#000; color:#fff; font-family:sans-serif; }
-  #canvas { display:block; background:#111; }
-  #subtitle { position:absolute; bottom:50px; width:100%; text-align:center; font-size:24px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pemutar Video Interaktif</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .player {
+      max-width: 800px;
+      width: 100%;
+      background: #222;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    video {
+      width: 100%;
+      display: block;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #333;
+    }
+    button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    input[type="range"] {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .subtitle {
+      position: absolute;
+      bottom: 60px;
+      width: 100%;
+      text-align: center;
+      color: yellow;
+      font-size: 16px;
+      text-shadow: 0 0 5px black;
+    }
+    .player-wrapper {
+      position: relative;
+    }
+  </style>
 </head>
 <body>
+  <div class="player">
+    <div class="player-wrapper">
+      <video id="video" src="sample.mp4" crossorigin="anonymous"></video>
+      <div class="subtitle" id="subtitle"></div>
+    </div>
+    <div class="controls">
+      <button id="play">▶️</button>
+      <input type="range" id="progress" min="0" value="0" step="0.1">
+      <button id="mute">🔇</button>
+      <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
+      <button id="fullscreen">⛶</button>
+    </div>
+  </div>
 
-<canvas id="canvas" width="800" height="450"></canvas>
-<div id="subtitle"></div>
+  <script>
+    const video = document.getElementById("video");
+    const playBtn = document.getElementById("play");
+    const muteBtn = document.getElementById("mute");
+    const progress = document.getElementById("progress");
+    const volume = document.getElementById("volume");
+    const fullscreen = document.getElementById("fullscreen");
+    const subtitleBox = document.getElementById("subtitle");
 
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const subtitle = document.getElementById('subtitle');
+    let subtitles = [
+      { start: 0, end: 5, text: "Halo! Selamat menonton." },
+      { start: 6, end: 10, text: "Ini adalah contoh subtitle." },
+      { start: 11, end: 20, text: "Pemutar video HTML + JS." }
+    ];
 
-// Adegan sederhana
-const scenes = [
-  { bg: '#112', char: {x:100, y:200, color:'#f00'}, text:"Halo! Aku karakter A." },
-  { bg: '#223', char: {x:200, y:200, color:'#0f0'}, text:"Hai! Aku karakter B." },
-  { bg: '#334', char: {x:150, y:200, color:'#ff0'}, text:"Petualangan dimulai!" }
-];
+    playBtn.addEventListener("click", () => {
+      if (video.paused) {
+        video.play();
+        playBtn.textContent = "⏸️";
+      } else {
+        video.pause();
+        playBtn.textContent = "▶️";
+      }
+    });
 
-let sceneIndex = 0;
+    muteBtn.addEventListener("click", () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? "🔊" : "🔇";
+    });
 
-function drawScene(scene) {
-  // Background
-  ctx.fillStyle = scene.bg;
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+    volume.addEventListener("input", () => {
+      video.volume = volume.value;
+    });
 
-  // Karakter (simbolik: lingkaran)
-  ctx.fillStyle = scene.char.color;
-  ctx.beginPath();
-  ctx.arc(scene.char.x, scene.char.y, 50, 0, Math.PI*2);
-  ctx.fill();
-}
+    video.addEventListener("timeupdate", () => {
+      progress.max = video.duration;
+      progress.value = video.currentTime;
 
-function showSubtitle(text) {
-  subtitle.innerText = text;
-  // Suara TTS
-  const utter = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utter);
-}
+      let current = subtitles.find(s => video.currentTime >= s.start && video.currentTime <= s.end);
+      subtitleBox.textContent = current ? current.text : "";
+    });
 
-function nextScene() {
-  if(sceneIndex >= scenes.length) return;
-  drawScene(scenes[sceneIndex]);
-  showSubtitle(scenes[sceneIndex].text);
-  sceneIndex++;
-}
+    progress.addEventListener("input", () => {
+      video.currentTime = progress.value;
+    });
 
-// Ganti adegan tiap 5 detik
-nextScene();
-setInterval(nextScene, 5000);
-</script>
-
+    fullscreen.addEventListener("click", () => {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      }
+    });
+  </script>
 </body>
 </html>
