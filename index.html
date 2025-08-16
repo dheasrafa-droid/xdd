@@ -1,97 +1,63 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Episode 1 - Necromancer vs Guardian</title>
-  <style>
-    body {
-      margin:0; padding:0; 
-      font-family: sans-serif;
-      background: black; 
-      color: white; 
-      overflow: hidden;
-    }
-    #scene {
-      position: absolute;
-      top:0; left:0; right:0; bottom:0;
-      background-size: cover;
-      background-position: center;
-      animation: zoompan 60s linear infinite;
-    }
-    @keyframes zoompan {
-      from { transform: scale(1) translate(0,0); }
-      to { transform: scale(1.1) translate(-10px,-10px); }
-    }
-    #subtitle {
-      position: absolute;
-      bottom: 40px; width: 100%;
-      text-align: center;
-      font-size: 22px;
-      text-shadow: 2px 2px 4px black;
-    }
-    #controls {
-      position: absolute;
-      bottom:0; width:100%;
-      background: rgba(0,0,0,0.6);
-      padding: 10px;
-      display: flex; justify-content: space-between; align-items:center;
-    }
-    button { padding: 6px 12px; border:none; border-radius:6px; }
-    input[type=range]{ flex:1; margin: 0 10px; }
-  </style>
+<meta charset="UTF-8">
+<title>Mini Anime Demo</title>
+<style>
+  body { margin:0; overflow:hidden; background:#000; color:#fff; font-family:sans-serif; }
+  #canvas { display:block; background:#111; }
+  #subtitle { position:absolute; bottom:50px; width:100%; text-align:center; font-size:24px; }
+</style>
 </head>
 <body>
-  <div id="scene"></div>
-  <div id="subtitle"></div>
-  <div id="controls">
-    <button id="playBtn">▶️ Play</button>
-    <input type="range" id="progress" value="0" min="0" max="100">
-    <button id="toggleSub">CC</button>
-  </div>
+
+<canvas id="canvas" width="800" height="450"></canvas>
+<div id="subtitle"></div>
 
 <script>
-const episode1 = [
-  // ======== 12 Babak × 150 detik ≈ 30 menit ========
-  { bg:"linear-gradient(#111,#222)", char:"Narator", text:"Di dunia yang diliputi kegelapan, seorang Necromancer bangkit dari kubur tua.", dur:20 },
-  { bg:"linear-gradient(#330000,#000)", char:"Necromancer", text:"Akhirnya... waktuku tiba. Dunia akan berlutut di hadapanku.", dur:15 },
-  { bg:"linear-gradient(#003,#112)", char:"Guardian", text:"Selama aku masih berdiri, kau takkan berhasil, Necromancer!", dur:15 },
-  { bg:"linear-gradient(#111,#000)", char:"Narator", text:"Pertarungan abadi pun dimulai. Cahaya dan kegelapan saling beradu.", dur:30 },
-  // kamu bisa bayangkan di sini lanjut sampai total ~200 scene
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const subtitle = document.getElementById('subtitle');
+
+// Adegan sederhana
+const scenes = [
+  { bg: '#112', char: {x:100, y:200, color:'#f00'}, text:"Halo! Aku karakter A." },
+  { bg: '#223', char: {x:200, y:200, color:'#0f0'}, text:"Hai! Aku karakter B." },
+  { bg: '#334', char: {x:150, y:200, color:'#ff0'}, text:"Petualangan dimulai!" }
 ];
 
-// suara per karakter
-const voicesByChar = {
-  "Narator": {pitch:1, rate:1},
-  "Necromancer": {pitch:0.6, rate:0.9},
-  "Guardian": {pitch:1.3, rate:1.1}
-};
+let sceneIndex = 0;
 
-let idx=0, playing=false, synth=window.speechSynthesis;
+function drawScene(scene) {
+  // Background
+  ctx.fillStyle = scene.bg;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-function playScene(i){
-  if(i>=episode1.length){ playing=false; return; }
-  idx=i;
-  const sc=episode1[i];
-  document.getElementById("scene").style.background=sc.bg;
-  document.getElementById("subtitle").innerText = showSub?sc.text:"";
-  // suara
-  const u = new SpeechSynthesisUtterance(sc.text);
-  const vopt=voicesByChar[sc.char]||{pitch:1,rate:1};
-  u.pitch=vopt.pitch; u.rate=vopt.rate; u.lang="id-ID";
-  synth.speak(u);
-  setTimeout(()=>{ if(playing) playScene(i+1); }, sc.dur*1000);
+  // Karakter (simbolik: lingkaran)
+  ctx.fillStyle = scene.char.color;
+  ctx.beginPath();
+  ctx.arc(scene.char.x, scene.char.y, 50, 0, Math.PI*2);
+  ctx.fill();
 }
 
-let showSub=true;
-document.getElementById("toggleSub").onclick=()=>{
-  showSub=!showSub;
-  document.getElementById("subtitle").innerText = showSub && episode1[idx]?episode1[idx].text:"";
-};
+function showSubtitle(text) {
+  subtitle.innerText = text;
+  // Suara TTS
+  const utter = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(utter);
+}
 
-document.getElementById("playBtn").onclick=()=>{
-  if(!playing){ playing=true; playScene(idx); }
-  else { synth.cancel(); playing=false; }
-};
+function nextScene() {
+  if(sceneIndex >= scenes.length) return;
+  drawScene(scenes[sceneIndex]);
+  showSubtitle(scenes[sceneIndex].text);
+  sceneIndex++;
+}
+
+// Ganti adegan tiap 5 detik
+nextScene();
+setInterval(nextScene, 5000);
 </script>
+
 </body>
 </html>
