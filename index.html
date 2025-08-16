@@ -1,102 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demo Fan Battle Game</title>
-<style>
-  body { margin:0; overflow:hidden; background:#333; font-family:sans-serif; }
-  #gameCanvas { display:block; margin:0 auto; background:#555; }
-  .hud { position:absolute; top:10px; left:10px; color:white; font-weight:bold; font-size:18px; }
-  .skills { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); }
-  .skills button { margin:5px; padding:10px 20px; font-size:16px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSRT RPG Arena</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1f2b, #0f1016);
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+    section { display: none; padding: 20px; }
+    #landing { display: block; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #landing h1 { font-size: 42px; text-shadow: 0 0 20px cyan; }
+    #landing button {
+      margin-top: 30px;
+      padding: 15px 40px;
+      font-size: 20px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: linear-gradient(45deg, #ff5722, #ff9800);
+      color: white;
+      box-shadow: 0 0 15px #ff9800;
+      transition: transform 0.2s;
+    }
+    #landing button:hover { transform: scale(1.1); }
+
+    /* Cutscene */
+    #cutscene { background: url('bg-arena.jpg') center/cover no-repeat; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .hero-intro {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 20px 0;
+      opacity: 0;
+      transform: scale(0.5) rotate(-10deg);
+      animation: heroIn 1.2s forwards;
+      text-shadow: 0 0 10px #ff0, 0 0 20px #f0f, 0 0 30px #0ff;
+    }
+    .hero-intro.shake { animation: heroIn 1.2s forwards, shake 0.4s 1.2s; }
+    @keyframes heroIn {
+      0% { opacity: 0; transform: scale(0.5) rotate(-10deg); filter: brightness(0.5); }
+      60% { opacity: 1; transform: scale(1.2) rotate(5deg); filter: brightness(1.5); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Select Hero */
+    #select { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #heroes { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }
+    .hero-btn {
+      padding: 15px;
+      background: #333;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 0 10px #00f;
+    }
+    .hero-btn:hover { background: #444; transform: scale(1.1); }
+
+    /* Arena */
+    #arena { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: url('arena-bg.jpg') center/cover no-repeat; }
+  </style>
 </head>
 <body>
+  <!-- Landing Page -->
+  <section id="landing">
+    <h1>⚔️ DSRT RPG Arena ⚔️</h1>
+    <button onclick="startCutscene()">Coba Sekarang</button>
+  </section>
 
-<div class="hud" id="hud">Player HP: 100 | Enemy HP: 80</div>
-<div class="skills">
-  <button onclick="normalAttack()">Attack</button>
-  <button onclick="skill1()">Skill 1</button>
-  <button onclick="skill2()">Skill 2</button>
-</div>
-<canvas id="gameCanvas"></canvas>
+  <!-- Cutscene -->
+  <section id="cutscene">
+    <h2>Pertarungan Dimulai!</h2>
+    <div id="cutscene-heroes"></div>
+  </section>
 
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+  <!-- Select Hero -->
+  <section id="select">
+    <h2>Pilih Hero Kamu</h2>
+    <div id="heroes"></div>
+  </section>
 
-function resizeCanvas(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+  <!-- Arena -->
+  <section id="arena">
+    <h2>Arena Pertarungan</h2>
+    <p id="arena-msg">Hero bertarung sampai waktu habis...</p>
+  </section>
 
-// Dummy characters
-let player = { x:100, y:canvas.height - 150, width:60, height:60, hp:100, color:'blue' };
-let enemy = { x:canvas.width - 200, y:canvas.height - 150, width:60, height:60, hp:80, color:'red' };
+  <audio id="bgm" src="battle.mp3" preload="auto"></audio>
+  <audio id="fx" src="fx.mp3" preload="auto"></audio>
 
-let attackAnimations = [];
+  <script>
+    const heroes = ["Warrior", "Mage", "Rogue", "Paladin", "Necromancer", "Archer", "Monk"];
+    const bgm = document.getElementById("bgm");
+    const fx = document.getElementById("fx");
 
-function drawChar(obj){
-  ctx.fillStyle = obj.color;
-  ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
-}
+    function switchSection(id) {
+      document.querySelectorAll("section").forEach(s => s.style.display="none");
+      document.getElementById(id).style.display="block";
+    }
 
-// Add attack effect
-function addAttackEffect(x, y, color){
-  attackAnimations.push({ x, y, size:20, color, life:20 });
-}
+    function startCutscene() {
+      bgm.play();
+      switchSection("cutscene");
+      const cutDiv = document.getElementById("cutscene-heroes");
+      cutDiv.innerHTML = "";
+      heroes.forEach((h,i) => {
+        setTimeout(()=>{
+          let el = document.createElement("div");
+          el.className="hero-intro shake";
+          el.textContent = "🔥 " + h + " muncul!";
+          cutDiv.appendChild(el);
+          fx.play();
+        }, i*1800);
+      });
+      setTimeout(showHeroSelect, heroes.length*1800 + 1500);
+    }
 
-function normalAttack(){
-  // Deal damage
-  enemy.hp -= 5;
-  addAttackEffect(enemy.x, enemy.y + enemy.height/4, 'yellow');
-  updateHUD();
-}
+    function showHeroSelect() {
+      switchSection("select");
+      const list = document.getElementById("heroes");
+      list.innerHTML = "";
+      heroes.forEach(h=>{
+        let btn=document.createElement("div");
+        btn.className="hero-btn";
+        btn.textContent=h;
+        btn.onclick=()=>startArena(h);
+        list.appendChild(btn);
+      });
+    }
 
-function skill1(){
-  // Stronger attack
-  enemy.hp -= 15;
-  addAttackEffect(enemy.x, enemy.y + enemy.height/4, 'orange');
-  updateHUD();
-}
-
-function skill2(){
-  // Multi-hit effect
-  for(let i=0;i<3;i++){
-    enemy.hp -= 5;
-    addAttackEffect(enemy.x + i*10, enemy.y + enemy.height/4, 'purple');
-  }
-  updateHUD();
-}
-
-function updateHUD(){
-  if(player.hp<0) player.hp=0;
-  if(enemy.hp<0) enemy.hp=0;
-  document.getElementById('hud').innerText = `Player HP: ${player.hp} | Enemy HP: ${enemy.hp}`;
-}
-
-function gameLoop(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  drawChar(player);
-  drawChar(enemy);
-
-  // Draw attack animations
-  attackAnimations.forEach((a,i)=>{
-    ctx.fillStyle = a.color;
-    ctx.fillRect(a.x, a.y, a.size, a.size);
-    a.life--;
-    if(a.life<=0) attackAnimations.splice(i,1);
-  });
-
-  requestAnimationFrame(gameLoop);
-}
-
-gameLoop();
-</script>
-
+    function startArena(hero) {
+      switchSection("arena");
+      document.getElementById("arena-msg").textContent = hero+" siap bertarung melawan semua hero!";
+    }
+  </script>
 </body>
 </html>
