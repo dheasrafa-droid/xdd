@@ -1,128 +1,189 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSRT RPG Arena</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Necromancer vs Guardian — Episode 1</title>
+  <meta name="description" content="Episode 1 video player with multi-resolution switching (480p/720p/1080p)." />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0f1a;
-      color: white;
-      text-align: center;
+    :root{
+      --bg:#0b0b0e; --panel:#141419; --muted:#2a2a33; --text:#e9e9f1; --accent:#8b5cf6; --accent-2:#06b6d4;
     }
-    section {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:radial-gradient(1000px 600px at 70% -10%, rgba(139,92,246,0.1), transparent 60%),
+      radial-gradient(800px 500px at 10% 110%, rgba(6,182,212,0.08), transparent 60%), var(--bg);
+      color:var(--text); font:500 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
+      display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    h1, h2 {
-      margin-bottom: 20px;
+    .wrap{
+      width:min(1100px, 100%);
     }
-    button {
-      padding: 12px 24px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(45deg, #00c6ff, #0072ff);
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s;
+    header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px}
+    .title{display:flex; align-items:center; gap:12px}
+    .badge{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:white; padding:4px 10px; border-radius:999px; font-size:12px; letter-spacing:.4px}
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent), var(--panel);
+      border:1px solid var(--muted); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+      padding:16px;
     }
-    button:hover {
-      transform: scale(1.1);
+    video{width:100%; max-height:65vh; border-radius:12px; display:block; background:#000}
+    .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px}
+    .controls .spacer{flex:1}
+    button, select{
+      background:#1b1b22; color:var(--text); border:1px solid var(--muted); border-radius:10px;
+      padding:8px 12px; cursor:pointer; transition:transform .04s ease, background .2s ease;
     }
-    .cutscene-container {
-      width: 100%;
-      height: 100%;
-      background: url('https://images.unsplash.com/photo-1611171719582-008651675835?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 28px;
-      font-weight: bold;
-      animation: fadeIn 2s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-    }
-    input {
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-    .login-links {
-      margin-top: 10px;
-    }
-    .login-links a {
-      color: #00c6ff;
-      text-decoration: none;
-      margin: 0 8px;
-    }
+    button:hover{background:#23232b}
+    button:active{transform:translateY(1px)}
+    .pill{border-radius:999px}
+    .hint{opacity:.7; font-size:12px; margin-top:8px}
+    details{margin-top:10px}
+    summary{cursor:pointer; opacity:.9}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <span class="badge">EPISODE 1</span>
+        <h1 style="margin:0; font-weight:700; letter-spacing:.3px">Necromancer vs Guardian</h1>
+      </div>
+      <div class="title" aria-hidden="true" style="opacity:.8">🎬</div>
+    </header><section class="panel">
+  <!-- Tip: Put your video files in the same folder: episode1_480p.mp4, episode1_720p.mp4, episode1_1080p.mp4 -->
+  <video id="player" controls preload="metadata" poster="poster_ep1.jpg">
+    <source src="episode1_720p.mp4" type="video/mp4" />
+    <!-- Optional WebM fallback (uncomment if you have them) -->
+    <!-- <source src="episode1_720p.webm" type="video/webm" /> -->
+    Your browser does not support HTML5 video.
+  </video>
 
-  <!-- Landing Page -->
-  <section id="landing">
-    <h1>DSRT RPG Arena</h1>
-    <p>Game RPG Arena dengan 7 Hero Epik</p>
-    <button onclick="startCutscene()">Coba Sekarang</button>
-  </section>
+  <div class="controls" role="group" aria-label="player controls">
+    <button id="playBtn" class="pill" aria-label="Play/Pause (Space)">▶︎ / ⏸</button>
+    <button id="muteBtn" class="pill" aria-label="Mute/Unmute (M)">🔇/🔊</button>
+    <button id="back10" aria-label="Back 10s">⏪ 10s</button>
+    <button id="fwd10" aria-label="Forward 10s">⏩ 10s</button>
+    <div class="spacer"></div>
+    <label for="resSel" class="sr-only">Resolution</label>
+    <select id="resSel" title="Resolution">
+      <option value="480">480p</option>
+      <option value="720" selected>720p</option>
+      <option value="1080">1080p</option>
+    </select>
+    <button id="pipBtn" title="Picture-in-Picture">PiP</button>
+    <button id="fsBtn" title="Fullscreen (F)">⛶</button>
+  </div>
+  <p class="hint">Shortcuts: <kbd>Space</kbd> Play/Pause · <kbd>F</kbd> Fullscreen · <kbd>M</kbd> Mute · <kbd>←/→</kbd> ±5s</p>
 
-  <!-- Cutscene Pertarungan -->
-  <section id="cutscene" style="display:none; position: relative;">
-    <div class="cutscene-container">
-      ⚔️ Pertarungan 7 Hero Dimulai ⚔️
-    </div>
-    <button style="position:absolute; bottom:20px; right:20px;" onclick="showLogin()">Skip</button>
-    <audio id="battle-audio" autoplay loop>
-      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-  </section>
+  <details>
+    <summary>How to use / Cara pakai</summary>
+    <ol>
+      <li>Letakkan file video di folder yang sama dengan file ini dengan nama: <code>episode1_480p.mp4</code>, <code>episode1_720p.mp4</code>, <code>episode1_1080p.mp4</code>.</li>
+      <li>Opsional: sediakan <code>poster_ep1.jpg</code> sebagai gambar cover.</li>
+      <li>Buka <code>index.html</code> ini di browser modern (Chrome/Edge/Firefox/Safari).</li>
+      <li>Ganti resolusi via dropdown. Pemutar akan melanjutkan dari detik terakhir secara mulus.</li>
+    </ol>
+  </details>
+</section>
 
-  <!-- Login Screen -->
-  <section id="login" style="display:none;">
-    <h2>Login ke DSRT</h2>
-    <form>
-      <label>ID :</label>
-      <input type="text" placeholder="Masukkan ID">
-      <label>Password :</label>
-      <input type="password" placeholder="Masukkan Password">
-      <button type="submit">Login</button>
-    </form>
-    <div class="login-links">
-      <a href="#">Forgot Password</a> | <a href="#">Register</a>
-    </div>
-  </section>
+  </div>  <script>
+    (function(){
+      const player = document.getElementById('player');
+      const playBtn = document.getElementById('playBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const fsBtn = document.getElementById('fsBtn');
+      const pipBtn = document.getElementById('pipBtn');
+      const resSel = document.getElementById('resSel');
+      const back10 = document.getElementById('back10');
+      const fwd10 = document.getElementById('fwd10');
 
-  <script>
-    function startCutscene() {
-      document.getElementById("landing").style.display = "none";
-      document.getElementById("cutscene").style.display = "block";
-      document.getElementById("battle-audio").play();
+      const RES_MAP = {
+        480: 'episode1_480p.mp4',
+        720: 'episode1_720p.mp4',
+        1080: 'episode1_1080p.mp4'
+      };
 
-      // cutscene durasi 10 detik
-      setTimeout(showLogin, 10000);
-    }
+      // Persist last chosen resolution
+      const savedRes = localStorage.getItem('ep1-res');
+      if(savedRes && RES_MAP[savedRes]){
+        resSel.value = savedRes;
+        swapSource(savedRes, /*autoplay*/ false, /*restoreTime*/ 0);
+      }
 
-    function showLogin() {
-      document.getElementById("cutscene").style.display = "none";
-      document.getElementById("login").style.display = "flex";
-      document.getElementById("battle-audio").pause();
-    }
-  </script>
+      // Basic controls
+      playBtn.addEventListener('click', ()=> player.paused ? player.play() : player.pause());
+      muteBtn.addEventListener('click', ()=> player.muted = !player.muted);
+      back10.addEventListener('click', ()=> player.currentTime = Math.max(0, player.currentTime - 10));
+      fwd10.addEventListener('click', ()=> player.currentTime = Math.min(player.duration || Infinity, player.currentTime + 10));
 
-</body>
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e)=>{
+        if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+        if(e.code === 'Space'){ e.preventDefault(); player.paused ? player.play() : player.pause(); }
+        else if(e.key.toLowerCase() === 'f'){ toggleFullscreen(); }
+        else if(e.key.toLowerCase() === 'm'){ player.muted = !player.muted; }
+        else if(e.key === 'ArrowLeft'){ player.currentTime = Math.max(0, player.currentTime - 5); }
+        else if(e.key === 'ArrowRight'){ player.currentTime = Math.min(player.duration || Infinity, player.currentTime + 5); }
+      });
+
+      // Fullscreen
+      fsBtn.addEventListener('click', toggleFullscreen);
+      function toggleFullscreen(){
+        const elem = document.documentElement;
+        if(!document.fullscreenElement){ elem.requestFullscreen?.(); }
+        else{ document.exitFullscreen?.(); }
+      }
+
+      // Picture in Picture
+      pipBtn.addEventListener('click', async ()=>{
+        try{
+          if(document.pictureInPictureElement){ await document.exitPictureInPicture(); }
+          else if(document.pictureInPictureEnabled){ await player.requestPictureInPicture(); }
+        }catch(err){ console.warn('PiP error', err); }
+      });
+
+      // Resolution switching (seamless)
+      resSel.addEventListener('change', ()=>{
+        const res = resSel.value;
+        localStorage.setItem('ep1-res', res);
+        swapSource(res, !player.paused, player.currentTime || 0);
+      });
+
+      function swapSource(res, autoplay, time){
+        const src = RES_MAP[res] || RES_MAP[720];
+        const wasMuted = player.muted;
+        const playbackRate = player.playbackRate;
+        const tracks = [...player.querySelectorAll('track')].map(t=>({
+          src: t.getAttribute('src'), kind: t.getAttribute('kind'), srclang: t.getAttribute('srclang'), label: t.getAttribute('label'), default: t.hasAttribute('default')
+        }));
+
+        // Replace by setting src directly preserves <track> elements
+        player.src = src;
+        player.load();
+        player.currentTime = Math.max(0, time - 0.15); // nudge back a bit for continuity
+        player.muted = wasMuted;
+        player.playbackRate = playbackRate;
+        if(autoplay){ player.play().catch(()=>{}); }
+
+        // Re-attach tracks if needed (for some browsers when sources change)
+        if(!player.querySelector('track') && tracks.length){
+          tracks.forEach(info=>{
+            const tr = document.createElement('track');
+            tr.src = info.src; tr.kind = info.kind; tr.srclang = info.srclang; tr.label = info.label; if(info.default) tr.setAttribute('default','');
+            player.appendChild(tr);
+          });
+        }
+      }
+
+      // Optional: add subtitles if file exists
+      // <track src="episode1_en.vtt" kind="subtitles" srclang="en" label="English"> (Put this tag into the <video> above)
+
+      // Auto focus keyboard shortcuts after interaction
+      player.addEventListener('play', ()=> playBtn.textContent = '⏸ Pause');
+      player.addEventListener('pause', ()=> playBtn.textContent = '▶︎ Play');
+      player.addEventListener('volumechange', ()=> muteBtn.textContent = player.muted ? '🔇 Muted' : '🔊 Sound');
+    })();
+  </script></body>
 </html>
