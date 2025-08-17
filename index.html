@@ -5,8 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DSRT - Digital Smart Revise Technology</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- AOS Animation CSS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    /* Animasi gradien */
+    .animated-bg {
+      background: linear-gradient(-45deg, #3b82f6, #6366f1, #8b5cf6, #ec4899);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+    }
+    @keyframes gradientMove {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
 </head>
 <body class="font-sans bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
@@ -21,23 +32,18 @@
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="relative flex-1">
-    <!-- Wallpaper background -->
-    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://picsum.photos/1920/1080?blur=5');"></div>
-    <!-- Overlay gradient -->
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-indigo-800/70"></div>
-
-    <div class="relative z-10 max-w-5xl mx-auto px-6 py-28 text-center text-white" data-aos="fade-up">
+  <!-- Hero dengan animasi gradien -->
+  <section class="animated-bg text-white flex-1 flex items-center justify-center">
+    <div class="text-center px-6 py-24" data-aos="fade-up">
       <h1 class="text-4xl md:text-6xl font-extrabold leading-tight drop-shadow-lg">
         Digital Smart Revise Technology
       </h1>
-      <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-200">
+      <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-100">
         Editor restorasi & promosi cerdas — cepat, mudah, dan profesional.
       </p>
       <div class="mt-8">
         <a href="/dashboard" class="px-8 py-4 rounded-xl bg-white text-blue-600 font-semibold shadow-xl hover:bg-gray-100 transition transform hover:scale-105">
-          Coba Sekarang
+          Mulai Sekarang
         </a>
       </div>
     </div>
@@ -68,7 +74,7 @@
   </section>
 
   <!-- CTA Akhir -->
-  <section class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
+  <section class="animated-bg text-white py-20">
     <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
       <h2 class="text-3xl md:text-4xl font-extrabold">Mulai Edit Lebih Pintar</h2>
       <p class="mt-4 text-lg">Gabung sekarang, gunakan DSRT, dan rasakan kemudahannya.</p>
@@ -88,13 +94,10 @@
     </div>
   </footer>
 
-  <!-- AOS JS -->
+  <!-- AOS Animations -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-    AOS.init({
-      duration: 800,
-      once: true
-    });
+    AOS.init({ duration: 800, once: true });
   </script>
 </body>
 </html>
