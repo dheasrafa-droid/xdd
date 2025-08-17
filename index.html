@@ -59,6 +59,7 @@
       align-items: center;
       text-align: center;
       padding: 20px;
+      margin-top: -40px; /* supaya naik dikit */
     }
     .hero h1 {
       font-size: 3.5rem;
@@ -85,6 +86,21 @@
     }
     .cta button:hover {
       background: #ffdb4d;
+    }
+
+    /* Scroll down indicator */
+    .scroll-down {
+      position: absolute;
+      bottom: 30px;
+      font-size: 2rem;
+      animation: bounce 1.5s infinite;
+      color: #ffcc00;
+      cursor: pointer;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(10px);}
+      60% {transform: translateY(5px);}
     }
 
     section {
@@ -152,6 +168,10 @@
     <p>Digital Smart Revise Technology</p>
     <div class="cta">
       <button>Mulai Sekarang</button>
+    </div>
+    <!-- Scroll down indicator -->
+    <div class="scroll-down" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+      ⌄
     </div>
   </div>
 
