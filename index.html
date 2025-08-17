@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DSRT - Digital Smart Revise Technology</title>
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Arial', sans-serif;
       background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
@@ -15,11 +13,9 @@
       overflow-x: hidden;
     }
 
-    /* Background parallax */
     .parallax {
       position: absolute;
-      width: 200%;
-      height: 200%;
+      width: 200%; height: 200%;
       background: url('https://www.transparenttextures.com/patterns/cubes.png');
       opacity: 0.08;
       animation: moveBg 20s linear infinite;
@@ -42,16 +38,8 @@
       position: relative;
       z-index: 2;
     }
-    .hero h1 {
-      font-size: 4rem;
-      font-weight: bold;
-      text-shadow: 0 5px 20px rgba(0,0,0,0.6);
-    }
-    .hero p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-      opacity: 0.85;
-    }
+    .hero h1 { font-size: 4rem; font-weight: bold; text-shadow: 0 5px 20px rgba(0,0,0,0.6); }
+    .hero p { font-size: 1.2rem; margin-top: 10px; opacity: 0.85; }
     .cta-btn {
       margin-top: 25px;
       display: inline-block;
@@ -63,36 +51,41 @@
       text-decoration: none;
       transition: 0.3s;
     }
-    .cta-btn:hover {
-      background: #00c6ff;
-      color: white;
-    }
+    .cta-btn:hover { background: #00c6ff; color: white; }
 
-    /* Shape divider */
-    .divider {
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 100%;
-      height: auto;
-      line-height: 0;
-    }
+    .divider { position: absolute; bottom: 0; left: 0; width: 100%; line-height: 0; }
 
-    /* Section berikutnya */
-    .about {
-      background: #f9f9f9;
-      color: #333;
-      padding: 80px 20px;
-      text-align: center;
-    }
-    .about h2 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-    .about p {
-      max-width: 700px;
+    /* Section umum */
+    section { padding: 80px 20px; text-align: center; }
+    .about { background: #f9f9f9; color: #333; }
+    .about h2 { font-size: 2.5rem; margin-bottom: 20px; }
+    .about p { max-width: 700px; margin: 0 auto; line-height: 1.6; }
+
+    /* Fitur unggulan */
+    .features { background: white; color: #333; }
+    .features h2 { font-size: 2.5rem; margin-bottom: 50px; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
       margin: 0 auto;
-      line-height: 1.6;
     }
+    .feature-card {
+      background: #f4f4f4;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-8px); }
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #203a43;
+    }
+    .feature-card h3 { margin-bottom: 10px; font-size: 1.3rem; }
+    .feature-card p { font-size: 0.95rem; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -103,11 +96,8 @@
     <h1>DSRT</h1>
     <p>Digital Smart Revise Technology</p>
     <a href="/login" class="cta-btn">Mulai Sekarang</a>
-
-    <!-- Divider -->
     <svg class="divider" viewBox="0 0 1440 320">
-      <path fill="#f9f9f9" fill-opacity="1" 
-        d="M0,224L1440,96L1440,320L0,320Z"></path>
+      <path fill="#f9f9f9" fill-opacity="1" d="M0,224L1440,96L1440,320L0,320Z"></path>
     </svg>
   </section>
 
@@ -120,6 +110,33 @@
       Didukung dengan fitur manual maupun AI, DSRT menghadirkan pengalaman editing modern 
       yang fleksibel, cepat, dan intuitif di browser Anda.
     </p>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <h2>Fitur Unggulan</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🖌️</div>
+        <h3>Edit Manual Lengkap</h3>
+        <p>Kontrol penuh dengan tools dasar hingga profesional, dari crop, filter, hingga retouching detail.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Kecerdasan AI</h3>
+        <p>Gunakan AI untuk restorasi otomatis, penghapusan objek, dan peningkatan kualitas foto secara instan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Preset & Template</h3>
+        <p>Pilih dari berbagai preset dan template siap pakai untuk editing cepat dan konsisten.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Multi Platform</h3>
+        <p>Akses DSRT langsung dari browser di PC, iPhone, maupun Android tanpa perlu instalasi tambahan.</p>
+      </div>
+    </div>
   </section>
 
   <script>
