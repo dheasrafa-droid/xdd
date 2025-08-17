@@ -5,117 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DSRT - Digital Smart Revise Technology</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- AOS Animation CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
   <!-- Navbar -->
-  <header class="bg-white shadow-md sticky top-0 z-50">
+  <header class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <img src="logo.png" alt="DSRT Logo" class="w-10 h-10">
         <span class="font-bold text-xl">DSRT</span>
       </div>
-      <nav class="hidden md:flex space-x-8 text-gray-600">
-        <a href="#tentang" class="hover:text-blue-600">Tentang</a>
-        <a href="#fitur" class="hover:text-blue-600">Fitur</a>
-        <a href="#kontak" class="hover:text-blue-600">Kontak</a>
-      </nav>
       <a href="/login" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">Login</a>
     </div>
   </header>
 
   <!-- Hero -->
-  <section class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-1">
-    <div class="max-w-7xl mx-auto px-6 py-24 text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Digital Smart Revise Technology</h1>
-      <p class="mt-6 text-lg md:text-xl max-w-3xl mx-auto">
-        Editor restorasi & promosi cerdas untuk kebutuhan desain Anda — dari basic hingga profesional.
+  <section class="relative flex-1">
+    <!-- Wallpaper background -->
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://picsum.photos/1920/1080?blur=5');"></div>
+    <!-- Overlay gradient -->
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-indigo-800/70"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 py-28 text-center text-white" data-aos="fade-up">
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight drop-shadow-lg">
+        Digital Smart Revise Technology
+      </h1>
+      <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-200">
+        Editor restorasi & promosi cerdas — cepat, mudah, dan profesional.
       </p>
-      <div class="mt-8 flex justify-center space-x-4">
-        <a href="/dashboard" class="px-6 py-3 rounded-xl bg-white text-blue-600 font-semibold shadow hover:bg-gray-100 transition">Coba Sekarang</a>
-        <a href="#fitur" class="px-6 py-3 rounded-xl border border-white font-semibold hover:bg-white hover:text-blue-600 transition">Lihat Fitur</a>
+      <div class="mt-8">
+        <a href="/dashboard" class="px-8 py-4 rounded-xl bg-white text-blue-600 font-semibold shadow-xl hover:bg-gray-100 transition transform hover:scale-105">
+          Coba Sekarang
+        </a>
       </div>
     </div>
   </section>
 
   <!-- Tentang -->
   <section id="tentang" class="max-w-7xl mx-auto px-6 py-20">
-    <div class="text-center mb-12">
+    <div class="text-center mb-12" data-aos="fade-up">
       <h2 class="text-3xl font-bold">Tentang DSRT</h2>
       <p class="mt-4 text-gray-600">
-        DSRT adalah platform editor modern yang menggabungkan <b>manual tools</b> dan <b>AI Capsule</b> 
-        untuk menyederhanakan proses editing gambar & promosi.
+        DSRT menggabungkan <b>manual tools</b> dengan <b>AI Capsule</b> untuk menghadirkan pengalaman editing gambar & promosi yang cepat, mudah, dan profesional.
       </p>
     </div>
     <div class="grid md:grid-cols-3 gap-8">
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in">
         <h3 class="text-xl font-semibold mb-3">Mudah Digunakan</h3>
-        <p class="text-gray-600">Antarmuka sederhana, cocok untuk pemula maupun profesional.</p>
+        <p class="text-gray-600">Antarmuka ramah pengguna, cocok untuk pemula maupun profesional.</p>
       </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="100">
         <h3 class="text-xl font-semibold mb-3">Fitur Lengkap</h3>
-        <p class="text-gray-600">Dari basic editing hingga AI restorasi dan promo maker.</p>
+        <p class="text-gray-600">Dari basic editing, AI restore, hingga promo maker siap cetak.</p>
       </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="200">
         <h3 class="text-xl font-semibold mb-3">Akses di Mana Saja</h3>
-        <p class="text-gray-600">Bisa digunakan di browser PC, iPhone, maupun Android.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Fitur -->
-  <section id="fitur" class="bg-gray-100 py-20">
-    <div class="max-w-7xl mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-12">Fitur Utama</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">Manual Restore</h3>
-          <p class="text-gray-600">Kontrol penuh editing gambar seperti brightness, contrast, sharpen.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">DSRT Capsule</h3>
-          <p class="text-gray-600">Preset & template AI untuk proses editing otomatis.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">Promo Maker</h3>
-          <p class="text-gray-600">Buat poster, banner, dan desain promosi siap cetak.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">Filter & Efek</h3>
-          <p class="text-gray-600">Puluhan filter profesional layaknya VSCO, Lightroom, Meitu.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">AI Tools</h3>
-          <p class="text-gray-600">Retouch otomatis, masking pintar, hingga cartoonizer.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <h3 class="font-semibold text-lg mb-2">Batch Editor</h3>
-          <p class="text-gray-600">Edit banyak gambar sekaligus dengan cepat.</p>
-        </div>
+        <p class="text-gray-600">Gunakan di browser PC, iPhone, maupun Android tanpa instalasi.</p>
       </div>
     </div>
   </section>
 
   <!-- CTA Akhir -->
   <section class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <h2 class="text-3xl md:text-4xl font-extrabold">Siap Mencoba DSRT?</h2>
-      <p class="mt-4 text-lg">Gabung sekarang dan mulai edit lebih pintar.</p>
-      <a href="/dashboard" class="mt-6 inline-block px-8 py-3 rounded-xl bg-white text-indigo-600 font-semibold shadow hover:bg-gray-100 transition">Mulai Gratis</a>
+    <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
+      <h2 class="text-3xl md:text-4xl font-extrabold">Mulai Edit Lebih Pintar</h2>
+      <p class="mt-4 text-lg">Gabung sekarang, gunakan DSRT, dan rasakan kemudahannya.</p>
+      <a href="/dashboard" class="mt-6 inline-block px-8 py-3 rounded-xl bg-white text-indigo-600 font-semibold shadow hover:bg-gray-100 transition transform hover:scale-105">Mulai Gratis</a>
     </div>
   </section>
 
-  <!-- Footer (hongfa bawah) -->
+  <!-- Footer -->
   <footer class="bg-gray-900 text-gray-400 py-6">
     <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
       <p>&copy; 2025 DSRT. All rights reserved.</p>
       <div class="flex space-x-6 mt-4 md:mt-0">
         <a href="#" class="hover:text-white">Privacy</a>
         <a href="#" class="hover:text-white">Terms</a>
-        <a href="#kontak" class="hover:text-white">Kontak</a>
+        <a href="#tentang" class="hover:text-white">Kontak</a>
       </div>
     </div>
   </footer>
 
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+  </script>
 </body>
 </html>
