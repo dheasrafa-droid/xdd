@@ -11,8 +11,14 @@ window.addEventListener('resize', () => {
   h = canvas.height = window.innerHeight;
 });
 
-const particleCount = 120;
+const particleCount = 150;
 const particles = [];
+const mouse = { x: w/2, y: h/2, radius: 100 };
+
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
 
 for(let i=0;i<particleCount;i++){
   particles.push({
@@ -30,18 +36,23 @@ function draw() {
   ctx.fillRect(0,0,w,h);
 
   for(let p of particles){
+    // efek interaksi mouse
+    const dx = p.x - mouse.x;
+    const dy = p.y - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    let scale = dist < mouse.radius ? 1.5 : 1;
+
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r*p.z, 0, Math.PI*2);
+    ctx.arc(p.x, p.y, p.r*p.z*scale, 0, Math.PI*2);
     ctx.fillStyle = `rgba(255,255,255,${p.z})`;
     ctx.fill();
 
-    p.x += p.dx;
-    p.y += p.dy;
+    p.x += p.dx * scale;
+    p.y += p.dy * scale;
 
-    // reset jika out of screen
-    if(p.y > h){ p.y = -10; p.x = Math.random()*w; }
-    if(p.x > w) { p.x = 0; }
-    if(p.x < 0) { p.x = w; }
+    if(p.y > h) p.y = -10;
+    if(p.x > w) p.x = 0;
+    if(p.x < 0) p.x = w;
   }
 
   requestAnimationFrame(draw);
