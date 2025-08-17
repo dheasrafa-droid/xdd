@@ -1,103 +1,76 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DSRT - Digital Smart Revise Technology</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Animasi gradien */
-    .animated-bg {
-      background: linear-gradient(-45deg, #3b82f6, #6366f1, #8b5cf6, #ec4899);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
     }
-    @keyframes gradientMove {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Background parallax */
+    .parallax {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: url('https://www.transparenttextures.com/patterns/cubes.png'); /* contoh pattern */
+      opacity: 0.08;
+      animation: moveBg 20s linear infinite;
+    }
+
+    @keyframes moveBg {
+      from { transform: translate(0,0); }
+      to { transform: translate(-200px,-200px); }
+    }
+
+    .hero {
+      color: white;
+      text-align: center;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      transition: transform 0.1s ease-out;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      opacity: 0.85;
     }
   </style>
 </head>
-<body class="font-sans bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body>
+  <div class="parallax"></div>
 
-  <!-- Navbar -->
-  <header class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <img src="logo.png" alt="DSRT Logo" class="w-10 h-10">
-        <span class="font-bold text-xl">DSRT</span>
-      </div>
-      <a href="/login" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">Login</a>
-    </div>
-  </header>
+  <div class="hero" id="hero">
+    <h1>DSRT</h1>
+    <p>Digital Smart Revise Technology</p>
+  </div>
 
-  <!-- Hero dengan animasi gradien -->
-  <section class="animated-bg text-white flex-1 flex items-center justify-center">
-    <div class="text-center px-6 py-24" data-aos="fade-up">
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight drop-shadow-lg">
-        Digital Smart Revise Technology
-      </h1>
-      <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-100">
-        Editor restorasi & promosi cerdas — cepat, mudah, dan profesional.
-      </p>
-      <div class="mt-8">
-        <a href="/dashboard" class="px-8 py-4 rounded-xl bg-white text-blue-600 font-semibold shadow-xl hover:bg-gray-100 transition transform hover:scale-105">
-          Mulai Sekarang
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Tentang -->
-  <section id="tentang" class="max-w-7xl mx-auto px-6 py-20">
-    <div class="text-center mb-12" data-aos="fade-up">
-      <h2 class="text-3xl font-bold">Tentang DSRT</h2>
-      <p class="mt-4 text-gray-600">
-        DSRT menggabungkan <b>manual tools</b> dengan <b>AI Capsule</b> untuk menghadirkan pengalaman editing gambar & promosi yang cepat, mudah, dan profesional.
-      </p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in">
-        <h3 class="text-xl font-semibold mb-3">Mudah Digunakan</h3>
-        <p class="text-gray-600">Antarmuka ramah pengguna, cocok untuk pemula maupun profesional.</p>
-      </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="100">
-        <h3 class="text-xl font-semibold mb-3">Fitur Lengkap</h3>
-        <p class="text-gray-600">Dari basic editing, AI restore, hingga promo maker siap cetak.</p>
-      </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="200">
-        <h3 class="text-xl font-semibold mb-3">Akses di Mana Saja</h3>
-        <p class="text-gray-600">Gunakan di browser PC, iPhone, maupun Android tanpa instalasi.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Akhir -->
-  <section class="animated-bg text-white py-20">
-    <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
-      <h2 class="text-3xl md:text-4xl font-extrabold">Mulai Edit Lebih Pintar</h2>
-      <p class="mt-4 text-lg">Gabung sekarang, gunakan DSRT, dan rasakan kemudahannya.</p>
-      <a href="/dashboard" class="mt-6 inline-block px-8 py-3 rounded-xl bg-white text-indigo-600 font-semibold shadow hover:bg-gray-100 transition transform hover:scale-105">Mulai Gratis</a>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-400 py-6">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-      <p>&copy; 2025 DSRT. All rights reserved.</p>
-      <div class="flex space-x-6 mt-4 md:mt-0">
-        <a href="#" class="hover:text-white">Privacy</a>
-        <a href="#" class="hover:text-white">Terms</a>
-        <a href="#tentang" class="hover:text-white">Kontak</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- AOS Animations -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-    AOS.init({ duration: 800, once: true });
+    const hero = document.getElementById("hero");
+    document.addEventListener("mousemove", (e) => {
+      let x = (window.innerWidth / 2 - e.pageX) / 25;
+      let y = (window.innerHeight / 2 - e.pageY) / 25;
+      hero.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+    document.addEventListener("mouseleave", () => {
+      hero.style.transform = "rotateY(0deg) rotateX(0deg)";
+    });
   </script>
 </body>
 </html>
