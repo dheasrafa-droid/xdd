@@ -10,7 +10,7 @@ body, html {
   background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
   color: white;
   min-height: 100vh;
-  overflow: hidden; /* biar particle tidak scroll */
+  overflow: hidden;
   position: relative;
 }
 
